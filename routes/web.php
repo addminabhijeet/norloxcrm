@@ -1,14 +1,15 @@
 <?php
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Controller;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ResumeController;
-use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\TrainerController;
 
 // Authentication
+Route::get('', [Controller::class, 'index'])->name('home');
 Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
 Route::post('/register', [RegisterController::class, 'register'])->name('register.submit');
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
@@ -26,8 +27,8 @@ Route::middleware(['auth'])->group(function () {
 
     // Senior
     Route::middleware('role:senior')->group(function () {
-        Route::post('/resume/approve/{id}', [ReviewController::class, 'approve'])->name('resume.approve');
-        Route::post('/resume/reject/{id}', [ReviewController::class, 'reject'])->name('resume.reject');
+        Route::post('/resume/approve/{id}', [ResumeController::class, 'approve'])->name('resume.approve');
+        Route::post('/resume/reject/{id}', [ResumeController::class, 'reject'])->name('resume.reject');
     });
 
     // Customer
@@ -42,7 +43,7 @@ Route::middleware(['auth'])->group(function () {
 
     // Trainer
     Route::middleware('role:trainer')->group(function () {
-        Route::post('/trainer/assign', [TrainerController::class, 'assignBatch'])->name('trainer.assign');
+        Route::post('/trainer/assign', [PaymentController::class, 'assignBatch'])->name('trainer.assign');
     });
 
     // Admin

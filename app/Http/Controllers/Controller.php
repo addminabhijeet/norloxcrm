@@ -2,11 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Illuminate\Foundation\Validation\ValidatesRequests;
-use Illuminate\Routing\Controller as BaseController;
+use Illuminate\Http\Request;
 
-class Controller extends BaseController
+class Controller 
 {
-    use AuthorizesRequests, ValidatesRequests;
+
+    /**
+     * Show the application home page.
+     */
+    public function index()
+    {
+        // return a Blade view stored in resources/views/home.blade.php
+        return view('home');
+    }
 }
