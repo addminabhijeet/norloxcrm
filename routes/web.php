@@ -55,6 +55,6 @@ Route::middleware(['auth'])->group(function () {
 Route::post('/resumes/upload/{id}', [ResumeController::class, 'upload'])->name('resumes.upload')->middleware('auth');
 Route::patch('/resumes/{id}/status', [ResumeController::class, 'updateStatus'])->name('resumes.updateStatus');
 Route::patch('/payment/{id}/status', [PaymentController::class, 'updateStatus'])->name('payment.updateStatus');
-Route::patch('/training/{id}/status', [PaymentController::class, 'updateStatus'])->name('training.updateStatus');
+Route::patch('/training/{id}/trastatus', [PaymentController::class, 'traupdateStatus'])->name('training.updateStatus');
 
 

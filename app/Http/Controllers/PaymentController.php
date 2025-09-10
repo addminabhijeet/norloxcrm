@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Payment;
 use App\Models\Resume;
+use App\Models\Training;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -49,9 +50,22 @@ class PaymentController extends Controller
             'status' => 'required|in:pending_review,forwarded_to_senior,accepted_by_senior,rejected_by_senior,customer_confirmation,paid,verified,in_training'
         ]);
 
-        $resume = Resume::findOrFail($id);
-        $resume->status = $request->status;
-        $resume->save();
+        $payment = Payment::findOrFail($id);
+        $payment->status = $request->status;
+        $payment->save();
+
+        return back()->with('success', 'Status updated successfully!');
+    }
+
+    public function traupdateStatus(Request $request, $id)
+    {
+        $request->validate([
+            'status' => 'required|in:pending_review,forwarded_to_senior,accepted_by_senior,rejected_by_senior,customer_confirmation,paid,verified,in_training'
+        ]);
+
+        $training = Training::findOrFail($id);
+        $training->status = $request->status;
+        $training->save();
 
         return back()->with('success', 'Status updated successfully!');
     }
