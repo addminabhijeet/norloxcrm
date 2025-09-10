@@ -241,6 +241,25 @@
                 grid-template-columns: 1fr;
             }
         }
+
+        .file-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+                            .download-link, .view-link {
+            text-decoration: none;
+            color: #fff;
+            background-color: #007bff;
+            padding: 5px 10px;
+            border-radius: 5px;
+            transition: background 0.3s, transform 0.3s;
+        }
+
+        .download-link:hover, .view-link:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
         
         @media (max-width: 480px) {
             .dashboard-header {
@@ -310,6 +329,7 @@
                 <table class="payments-table">
                     <thead>
                         <tr>
+                            <th>Name</th>
                             <th>Resume</th>
                             <th>Status</th>
                             <th>Payment</th>
@@ -334,28 +354,18 @@
                             @endphp
                             <tr>
                                 <td>
-                                    <span class="candidate-name">{{ $payment->resume->candidate_name }}</span>
-
-                                    <!-- View Resume PDF -->
-                                    @if($payment->resume->resume_file)
-                                        <div style="margin-top:5px;">
-                                            <a href="{{ asset('storage/resumes/' . $payment->resume->resume_file) }}" target="_blank">
-                                                <i class="fas fa-file-pdf"></i> View PDF
-                                            </a>
-                                        </div>
-                                    @endif
-
-                                    <!-- Upload Resume PDF -->
-                                    <form action="{{ route('resumes.upload', $payment->resume->id) }}" 
-                                        method="POST" 
-                                        enctype="multipart/form-data" 
-                                        style="margin-top:5px;">
-                                        @csrf
-                                        <input type="file" name="resume_file" accept="application/pdf" required style="margin-bottom:4px;">
-                                        <button type="submit" class="btn btn-sm" style="background:#0ea5e9;color:white;border:none;border-radius:4px;padding:3px 8px;">
-                                            Upload
-                                        </button>
-                                    </form>
+                                    <span class="candidate-name">{{ $payment->resume->candidate_name }}</span>                        
+                                </td>
+                                <td>
+                                    <div class="file-actions">
+                                    <!-- View button -->
+                                    <a href="{{ asset('storage/resumes/' . $payment->resume->resume_file) }}" 
+                                    class="view-link" 
+                                    target="_blank" 
+                                    rel="noopener noreferrer">
+                                        <i class="fas fa-eye"></i> View
+                                    </a>
+                                </div>
                                 </td>
                                 <td>
                                     <span class="status-badge {{ $statusClass }}">{{ $payment->resume->status }}</span>
