@@ -31,40 +31,20 @@
         }
         
         .dashboard-header {
-            background: linear-gradient(to right, #4f46e5, #7c3aed);
+            background: linear-gradient(to right, #6366f1, #4f46e5);
             color: white;
             padding: 25px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
         }
         
         .dashboard-header h2 {
             font-size: 24px;
             font-weight: 600;
-        }
-        
-        .upload-btn {
-            display: inline-flex;
+            display: flex;
             align-items: center;
-            background: white;
-            color: #4f46e5;
-            text-decoration: none;
-            padding: 10px 18px;
-            border-radius: 8px;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
         
-        .upload-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        }
-        
-        .upload-btn i {
-            margin-right: 8px;
+        .dashboard-header h2 i {
+            margin-right: 12px;
         }
         
         .dashboard-content {
@@ -78,20 +58,52 @@
             color: #1e293b;
             display: flex;
             align-items: center;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e2e8f0;
         }
         
         .section-title i {
             margin-right: 10px;
             color: #4f46e5;
         }
+
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            border-left: 4px solid #6366f1;
+        }
+        
+        .stat-title {
+            font-size: 14px;
+            color: #64748b;
+            margin-bottom: 8px;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: 600;
+            color: #6366f1;
+        }
+        
+        .resumes-table-container {
+            overflow-x: auto;
+            border-radius: 8px;
+            box-shadow: 0 1px 10px rgba(0, 0, 0, 0.05);
+        }
         
         .resumes-table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 15px;
-            box-shadow: 0 1px 10px rgba(0, 0, 0, 0.05);
-            border-radius: 8px;
-            overflow: hidden;
+            min-width: 800px;
         }
         
         .resumes-table th {
@@ -134,6 +146,11 @@
         }
         
         .status-reviewed {
+            background-color: #dcfce7;
+            color: #16a34a;
+        }
+
+        .status-completed {
             background-color: #dcfce7;
             color: #16a34a;
         }
@@ -254,32 +271,32 @@
      
             <form method="POST" action="{{ route('logout') }}" style="display:inline;">
                 @csrf
-                <button type="submit" class="upload-btn" 
+                <button type="submit" 
                         style="background:none; border:none; color:#0ea5e9; cursor:pointer; font-size:inherit;">
                     Logout
                 </button>
             </form>
         </div>
 
-        <!-- Statistics Cards -->
-        <div class="stats-container">
-            <div class="stat-card">
-                <div class="stat-title">TOTAL ASSIGNED</div>
-                <div class="stat-value">{{ $resumes->count() }}</div>
+            <!-- Statistics Cards -->
+            <div class="stats-container">
+                <div class="stat-card">
+                    <div class="stat-title">TOTAL ASSIGNED</div>
+                    <div class="stat-value">{{ $resumes->count() }}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title">PENDING REVIEW</div>
+                    <div class="stat-value">{{ $resumes->where('status', 'pending')->count() }}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title">IN REVIEW</div>
+                    <div class="stat-value">{{ $resumes->where('status', 'in_review')->count() }}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title">COMPLETED</div>
+                    <div class="stat-value">{{ $resumes->where('status', 'completed')->count() }}</div>
+                </div>
             </div>
-            <div class="stat-card">
-                <div class="stat-title">PENDING REVIEW</div>
-                <div class="stat-value">{{ $resumes->where('status', 'pending')->count() }}</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-title">IN REVIEW</div>
-                <div class="stat-value">{{ $resumes->where('status', 'in_review')->count() }}</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-title">COMPLETED</div>
-                <div class="stat-value">{{ $resumes->where('status', 'completed')->count() }}</div>
-            </div>
-        </div>
 
        
             @if($resumes && count($resumes) > 0)
@@ -342,12 +359,12 @@
                     @endforeach
                 </tbody>
             </table>
-        @else
+            @else
             <div class="empty-state">
                 <i class="fas fa-folder-open"></i>
                 <p>You haven't uploaded any resumes yet.</p>
             </div>
-        @endif
+            @endif
         </div>
     </div>
 </body>

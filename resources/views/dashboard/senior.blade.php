@@ -379,6 +379,7 @@
                                             $statuses = [
                                                 
                                                 'forwarded_to_senior' => 'Forwarded to Senior',
+                                                'pending_review' => 'Pending Review',
                                                 'accepted_by_senior' => 'Accepted by Senior',
                                                 'rejected_by_senior' => 'Rejected by Senior',
                                                 'customer_confirmation' => 'Customer Confirmation'
