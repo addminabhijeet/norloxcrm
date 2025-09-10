@@ -42,4 +42,17 @@ class PaymentController extends Controller
 
         return redirect()->route('dashboard')->with('success', 'Payment successful!');
     }
+
+    public function updateStatus(Request $request, $id)
+    {
+        $request->validate([
+            'status' => 'required|in:pending_review,forwarded_to_senior,accepted_by_senior,rejected_by_senior,customer_confirmation,paid,verified,in_training'
+        ]);
+
+        $resume = Resume::findOrFail($id);
+        $resume->status = $request->status;
+        $resume->save();
+
+        return back()->with('success', 'Status updated successfully!');
+    }
 }
