@@ -56,5 +56,6 @@ Route::post('/resumes/upload/{id}', [ResumeController::class, 'upload'])->name('
 Route::patch('/resumes/{id}/status', [ResumeController::class, 'updateStatus'])->name('resumes.updateStatus');
 Route::patch('/payment/{id}/status', [PaymentController::class, 'updateStatus'])->name('payment.updateStatus');
 Route::patch('/training/{id}/trastatus', [PaymentController::class, 'traupdateStatus'])->name('training.updateStatus');
+Route::get('/login-history', [LoginController::class, 'loginHistory'])->name('login.history');
 
 
