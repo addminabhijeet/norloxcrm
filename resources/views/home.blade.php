@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Norlox - Staffing Dashboard</title>
+    <title>Norlox Solutions - Staffing Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
@@ -165,7 +165,7 @@ body {
 </head>
 <body>
     <header class="header">
-        <div class="logo">Norlox</div>
+        <div class="logo">Norlox Solutions</div>
         <nav class="main-nav">
             <a class="nav-btn" href="{{ route('login') }}">LogIn</a>
         </nav>
@@ -174,7 +174,7 @@ body {
     <main class="landing-content">
         <section class="hero-section">
             <div class="hero-text">
-                <h1>Welcome to Norlox</h1>
+                <h1>Welcome to Norlox Solutions</h1>
                 <p>Your centralized hub for resume management and recruitment workflow. Select your role to get started.</p>
             </div>
             <div class="user-roles-grid">
