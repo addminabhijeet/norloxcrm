@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Norlox - Your Professional Dashboard</title>
+    <title>Norlox - Staffing Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
@@ -167,12 +167,7 @@ body {
     <header class="header">
         <div class="logo">Norlox</div>
         <nav class="main-nav">
-            <a href="#dashboard" class="nav-link">Dashboard</a>
-            <a href="#about" class="nav-link">About</a>
-            <form method="POST" action="/logout">
-                @csrf
-                <button type="submit" class="nav-btn">Logout</button>
-            </form>
+            <a class="nav-btn" href="{{ route('login') }}">LogIn</a>
         </nav>
     </header>
 
@@ -207,6 +202,11 @@ body {
                     <i class="fas fa-user-shield role-icon"></i>
                     <h3>Admin</h3>
                     <p>Manage users, permissions, and system settings.</p>
+                </a>
+                <a href="/dashboard/customer" class="role-card">
+                    <i class="fas fa-user role-icon"></i>
+                    <h3>Customer</h3>
+                    <p>View and manage your profile, resumes, and training progress.</p>
                 </a>
             </div>
         </section>

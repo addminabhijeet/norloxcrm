@@ -305,8 +305,7 @@
                 </div>
             </div>
 
-            <!-- Payments Table -->
-            @if($payments && $payments->count() > 0)
+            @if($payments->count() > 0)
             <div class="payments-table-container">
                 <table class="payments-table">
                     <thead>
@@ -319,136 +318,64 @@
                     </thead>
                     <tbody>
                         @foreach($payments as $payment)
-                        @php
-                            $statusClass = match($payment->resume->status) {
-                                'completed' => 'status-completed',
-                                'in_training' => 'status-in_training',
-                                'rejected' => 'status-rejected',
-                                default => 'status-pending',
-                            };
+                            @php
+                                $statusClass = match($payment->resume->status) {
+                                    'completed' => 'status-completed',
+                                    'in_training' => 'status-in_training',
+                                    'rejected' => 'status-rejected',
+                                    default => 'status-pending',
+                                };
 
-                            $paymentStatusClass = match($payment->status) {
-                                'completed' => 'payment-completed',
-                                'failed' => 'payment-failed',
-                                default => 'payment-pending',
-                            };
-                        @endphp
-                        <tr>
-                            <td>
-                                <span class="candidate-name">{{ $payment->resume->candidate_name }}</span>
-                                
-                                <!-- View Resume PDF -->
-                                @if($payment->resume->resume_file)
-                                    <div style="margin-top:5px;">
-                                        <a href="{{ asset('storage/resumes/' . $payment->resume->resume_file) }}" target="_blank">
-                                            <i class="fas fa-file-pdf"></i> View PDF
-                                        </a>
-                                    </div>
-                                @endif
+                                $paymentStatusClass = match($payment->status) {
+                                    'completed' => 'payment-completed',
+                                    'failed' => 'payment-failed',
+                                    default => 'payment-pending',
+                                };
+                            @endphp
+                            <tr>
+                                <td>
+                                    <span class="candidate-name">{{ $payment->resume->candidate_name }}</span>
 
-                                <!-- Upload Resume PDF -->
-                                <form action="{{ route('resumes.upload', $payment->resume->id) }}" method="POST" enctype="multipart/form-data" style="margin-top:5px;">
-                                    @csrf
-                                    <input type="file" name="resume_file" accept="application/pdf" required style="margin-bottom:4px;">
-                                    <button type="submit" class="btn btn-sm" style="background:#0ea5e9;color:white;border:none;border-radius:4px;padding:3px 8px;">
-                                        Upload
-                                    </button>
-                                </form>
-                            </td>
-                            <td>
-                                <span class="status-badge {{ $statusClass }}">{{ $payment->resume->status }}</span>
-                            </td>
-                            <td>
-                                <span class="payment-status {{ $paymentStatusClass }}">{{ $payment->status }}</span>
-                                <span class="amount">${{ number_format($payment->amount, 2) }}</span>
-                            </td>
-                            <td>
-                                @if($payment->resume->status == 'in_training')
-                                    <div class="training-info">
-                                        <i class="fas fa-calendar-alt"></i>
-                                        {{ $payment->resume->trainings->first()->batch_name ?? 'Scheduled' }}
-                                    </div>
-                                @else
-                                    <span class="training-na">N/A</span>
-                                @endif
-                            </td>
-                        </tr>
+                                    <!-- View Resume PDF -->
+                                    @if($payment->resume->resume_file)
+                                        <div style="margin-top:5px;">
+                                            <a href="{{ asset('storage/resumes/' . $payment->resume->resume_file) }}" target="_blank">
+                                                <i class="fas fa-file-pdf"></i> View PDF
+                                            </a>
+                                        </div>
+                                    @endif
+
+                                    <!-- Upload Resume PDF -->
+                                    <form action="{{ route('resumes.upload', $payment->resume->id) }}" 
+                                        method="POST" 
+                                        enctype="multipart/form-data" 
+                                        style="margin-top:5px;">
+                                        @csrf
+                                        <input type="file" name="resume_file" accept="application/pdf" required style="margin-bottom:4px;">
+                                        <button type="submit" class="btn btn-sm" style="background:#0ea5e9;color:white;border:none;border-radius:4px;padding:3px 8px;">
+                                            Upload
+                                        </button>
+                                    </form>
+                                </td>
+                                <td>
+                                    <span class="status-badge {{ $statusClass }}">{{ $payment->resume->status }}</span>
+                                </td>
+                                <td>
+                                    <span class="payment-status {{ $paymentStatusClass }}">{{ $payment->status }}</span>
+                                    <span class="amount">${{ number_format($payment->amount, 2) }}</span>
+                                </td>
+                                <td>
+                                    @if($payment->resume->status == 'in_training')
+                                        <div class="training-info">
+                                            <i class="fas fa-calendar-alt"></i>
+                                            {{ $payment->resume->trainings?->first()?->batch_name ?? 'Scheduled' }}
+                                        </div>
+                                    @else
+                                        <span class="training-na">N/A</span>
+                                    @endif
+                                </td>
+                            </tr>
                         @endforeach
-                    </tbody>
-                </table>
-            </div>
-            @else
-            <div class="empty-state">
-                <i class="fas fa-file-invoice"></i>
-                <p>No payment records found.</p>
-            </div>
-            @endif
-            @if($payment)
-            <div class="payments-table-container">
-                <table class="payments-table">
-                    <thead>
-                        <tr>
-                            <th>Resume</th>
-                            <th>Status</th>
-                            <th>Payment</th>
-                            <th>Training</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @php
-                            $statusClass = match($payment->resume->status) {
-                                'completed' => 'status-completed',
-                                'in_training' => 'status-in_training',
-                                'rejected' => 'status-rejected',
-                                default => 'status-pending',
-                            };
-
-                            $paymentStatusClass = match($payment->status) {
-                                'completed' => 'payment-completed',
-                                'failed' => 'payment-failed',
-                                default => 'payment-pending',
-                            };
-                        @endphp
-                        <tr>
-                            <td>
-                                <span class="candidate-name">{{ $payment->resume->candidate_name }}</span>
-
-                                <!-- View Resume PDF -->
-                                @if($payment->resume->resume_file)
-                                    <div style="margin-top:5px;">
-                                        <a href="{{ asset('storage/resumes/' . $payment->resume->resume_file) }}" target="_blank">
-                                            <i class="fas fa-file-pdf"></i> View PDF
-                                        </a>
-                                    </div>
-                                @endif
-
-                                <!-- Upload Resume PDF -->
-                                <form action="{{ route('resumes.upload', $payment->resume->id) }}" method="POST" enctype="multipart/form-data" style="margin-top:5px;">
-                                    @csrf
-                                    <input type="file" name="resume_file" accept="application/pdf" required style="margin-bottom:4px;">
-                                    <button type="submit" class="btn btn-sm" style="background:#0ea5e9;color:white;border:none;border-radius:4px;padding:3px 8px;">
-                                        Upload
-                                    </button>
-                                </form>
-                            </td>
-                            <td>
-                                <span class="status-badge {{ $statusClass }}">{{ $payment->resume->status }}</span>
-                            </td>
-                            <td>
-                                <span class="payment-status {{ $paymentStatusClass }}">{{ $payment->status }}</span>
-                                <span class="amount">${{ number_format($payment->amount, 2) }}</span>
-                            </td>
-                            <td>
-                                @if($payment->resume->status == 'in_training')
-                                    <div class="training-info">
-                                        <i class="fas fa-calendar-alt"></i>
-                                        {{ $payment->resume->trainings->first()->batch_name ?? 'Scheduled' }}
-                                    </div>
-                                @else
-                                    <span class="training-na">N/A</span>
-                                @endif
-                            </td>
-                        </tr>
                     </tbody>
                 </table>
             </div>

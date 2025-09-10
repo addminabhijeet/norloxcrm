@@ -17,11 +17,13 @@ class DashboardController extends Controller
 
         switch ($user->role) {
             case 'junior':
-                $resumes = Resume::where('uploaded_by', $user->id)->get();
+                $resumes = Resume::where('status', 'pending_review')
+                                ->get();
                 return view('dashboard.junior', compact('resumes'));
 
             case 'senior':
-                $resumes = Resume::where('uploaded_by', $user->id)->get();
+                $resumes = Resume::where('status', 'forwarded_to_senior')
+                                ->get();
                 return view('dashboard.senior', compact('resumes'));
 
             case 'customer':
@@ -29,6 +31,7 @@ class DashboardController extends Controller
                     ->with(['resume', 'training'])
                     ->get();
                 return view('dashboard.customer', compact('payments'));
+
 
             case 'accountant':
                 $payments = Payment::with(['customer', 'resume'])->get();
