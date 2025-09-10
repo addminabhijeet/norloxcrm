@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\Auth;
-
+use App\Models\Login;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -15,6 +15,7 @@ class LoginController extends Controller
     }
 
     // Handle login
+
     public function login(Request $request)
     {
         $credentials = $request->validate([
@@ -25,7 +26,14 @@ class LoginController extends Controller
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
 
-            // ✅ Always redirect to dashboard
+            // ✅ Save login details
+            Login::create([
+                'user_id' => Auth::id(),
+                'ip_address' => $request->ip(),
+                'user_agent' => $request->header('User-Agent'),
+                'logged_in_at' => now()
+            ]);
+
             return redirect()->route('dashboard');
         }
 
