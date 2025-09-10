@@ -53,9 +53,6 @@ class LoginController extends Controller
         return redirect('/login');
     }
 
-    public function logins()
-    {
-        return $this->hasMany(Login::class);
-    }
+
 
 }
