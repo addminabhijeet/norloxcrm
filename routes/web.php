@@ -9,12 +9,16 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\TrainerController;
 
 // Authentication
-Route::get('', [Controller::class, 'index'])->name('home');
+Route::get('/', [Controller::class, 'index'])->name('home');
 Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
 Route::post('/register', [RegisterController::class, 'register'])->name('register.submit');
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login'])->name('login.submit');
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+
+Route::get('/', function () {
+    return redirect()->route('login');
+})->name('home');
 
 // Dashboard (all roles go through DashboardController@index)
 Route::middleware(['auth'])->group(function () {
