@@ -300,6 +300,13 @@
                 <i class="fas fa-calendar-alt"></i> Calendar
             </a>
 
+            <!-- Calendar Button -->
+            <a href="{{ route('google.sheet.index') }}" 
+            class="calendar-btn"
+            style="margin-right: 15px; padding: 6px 12px; background-color: #4f46e5; color: #fff; border-radius: 6px; text-decoration: none; font-size: 0.9em;">
+                <i class="fas fa-calendar-alt"></i> Google Sheet
+            </a>
+
             <form method="POST" action="{{ route('logout') }}" style="display:inline;">
                 @csrf
                 <button type="submit" style="background:none; border:none; color:#ffffff; cursor:pointer; font-size:inherit;">

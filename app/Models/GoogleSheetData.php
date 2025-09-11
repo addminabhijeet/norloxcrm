@@ -2,12 +2,18 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class GoogleSheetData extends Model
 {
-    use HasFactory;
+    protected $table = 'google_sheet_data';
 
-    protected $fillable = ['name', 'email', 'phone'];
+    protected $fillable = [
+        'sheet_row_number',
+        'data',
+    ];
+
+    protected $casts = [
+        'data' => 'array', // auto decode JSON to array
+    ];
 }

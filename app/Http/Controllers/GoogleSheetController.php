@@ -1,25 +1,12 @@
 <?php
-// app/Http/Controllers/GoogleSheetController.php
+
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\GoogleSheetData;
-use Google\Client;
-use Google\Service\Sheets;
 
 class GoogleSheetController extends Controller
 {
-    protected function getClient()
-    {
-        $client = new Client();
-        $client->setApplicationName('Laravel Google Sheets');
-        $client->setScopes([Sheets::SPREADSHEETS]);
-        $client->setAuthConfig(storage_path('app/credentials.json'));
-        $client->setAccessType('offline');
-
-        return $client;
-    }
-
     public function index()
     {
         $data = GoogleSheetData::all();
@@ -32,34 +19,37 @@ class GoogleSheetController extends Controller
             'sheet_link' => 'required|url'
         ]);
 
-        // Extract spreadsheetId from URL
+        // Extract spreadsheetId
         preg_match('/\/d\/([a-zA-Z0-9-_]+)/', $request->sheet_link, $matches);
         $spreadsheetId = $matches[1] ?? null;
 
         if (!$spreadsheetId) {
-            return back()->withErrors(['sheet_link' => 'Invalid Google Sheet link']);
+            return back()->with('error', 'Invalid Google Sheet link');
         }
 
-        $client = $this->getClient();
-        $service = new Sheets($client);
-        $range = 'Sheet1!A:C'; // Change if your sheet has a different range
+        $csvUrl = "https://docs.google.com/spreadsheets/d/{$spreadsheetId}/export?format=csv";
+        $csvData = @file_get_contents($csvUrl);
 
-        $response = $service->spreadsheets_values->get($spreadsheetId, $range);
-        $values = $response->getValues();
+        if ($csvData === false) {
+            return back()->with('error', 'Unable to fetch Google Sheet (maybe private?)');
+        }
 
-        if ($values) {
-            $rowIndex = 2; // Assuming first row is header
-            foreach ($values as $row) {
-                GoogleSheetData::updateOrCreate(
-                    ['email' => $row[1] ?? null],
-                    [
-                        'name' => $row[0] ?? null,
-                        'phone' => $row[2] ?? null,
-                        'sheet_row_number' => $rowIndex
-                    ]
-                );
-                $rowIndex++;
-            }
+        $rows = array_map('str_getcsv', explode("\n", trim($csvData)));
+        $header = array_shift($rows); // column names
+
+        $rowIndex = 2; // start after header
+        foreach ($rows as $row) {
+            if (empty(array_filter($row))) continue; // skip empty rows
+            if (count($row) !== count($header)) continue; // skip malformed rows
+
+            $rowData = array_combine($header, $row);
+
+            GoogleSheetData::updateOrCreate(
+                ['sheet_row_number' => $rowIndex],
+                ['data' => json_encode($rowData, JSON_UNESCAPED_UNICODE)]
+            );
+
+            $rowIndex++;
         }
 
         return redirect()->route('google.sheet.index')->with('success', 'Data fetched successfully!');
@@ -67,34 +57,61 @@ class GoogleSheetController extends Controller
 
     public function update(Request $request, $id)
     {
-        $row = GoogleSheetData::findOrFail($id);
-        $row->update($request->only(['name','email','phone']));
+        $rowData = $request->input('data'); // single row object now
 
-        // Update Google Sheet
-        $client = $this->getClient();
-        $service = new Sheets($client);
+        if (empty($rowData)) {
+            return response()->json(['success' => false, 'message' => 'No data provided']);
+        }
 
-        $spreadsheetId = 'YOUR_SPREADSHEET_ID'; // Optionally store in DB or session
-        $rowNumber = $row->sheet_row_number;
-        $range = "Sheet1!A{$rowNumber}:C{$rowNumber}"; // Adjust columns as needed
+        $row = GoogleSheetData::find($id);
 
-        $values = [
-            [
-                $row->name,
-                $row->email,
-                $row->phone
-            ]
-        ];
+        if (!$row) {
+            return response()->json(['success' => false, 'message' => 'Row not found']);
+        }
 
-        $body = new \Google\Service\Sheets\ValueRange([
-            'values' => $values
+        $row->update([
+            'data' => json_encode($rowData, JSON_UNESCAPED_UNICODE),
         ]);
 
-        $params = ['valueInputOption' => 'RAW'];
-
-        $service->spreadsheets_values->update($spreadsheetId, $range, $body, $params);
-
-        return response()->json(['success' => true]);
+        return response()->json([
+            'success' => true,
+            'row' => [
+                'id' => $row->id,
+                'sheet_row_number' => $row->sheet_row_number,
+                'data' => $rowData
+            ]
+        ]);
     }
+
+
+
+    public function store(Request $request)
+    {
+        $rows = $request->input('rows', []);
+
+        if (empty($rows)) {
+            return response()->json(['success' => false, 'message' => 'No data provided']);
+        }
+
+        $maxRow = GoogleSheetData::max('sheet_row_number') ?? 1;
+        $inserted = [];
+
+        foreach ($rows as $rowData) {
+            $maxRow++;
+            $newRow = GoogleSheetData::create([
+                'sheet_row_number' => $maxRow,
+                'data' => json_encode($rowData, JSON_UNESCAPED_UNICODE),
+            ]);
+
+            $inserted[] = [
+                'id' => $newRow->id,
+                'sheet_row_number' => $newRow->sheet_row_number,
+                'data' => $rowData
+            ];
+        }
+
+        return response()->json(['success' => true, 'rows' => $inserted]);
+    }
+
 
 }

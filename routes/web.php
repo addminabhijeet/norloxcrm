@@ -69,5 +69,7 @@ Route::get('/login-history', [LoginController::class, 'loginHistory'])->name('lo
 
 Route::get('/google-sheet', [GoogleSheetController::class, 'index'])->name('google.sheet.index');
 Route::post('/google-sheet/fetch', [GoogleSheetController::class, 'fetch'])->name('google.sheet.fetch');
-Route::post('/google-sheet/update/{id}', [GoogleSheetController::class, 'update'])->name('google.sheet.update');
+Route::patch('/google-sheet/update/{id}', [GoogleSheetController::class, 'update'])->name('google.sheet.update');
+Route::post('/google-sheet/store', [GoogleSheetController::class, 'store'])->name('google.sheet.store');
+
 
