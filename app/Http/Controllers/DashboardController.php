@@ -28,9 +28,10 @@ class DashboardController extends Controller
 
             case 'customer':
                 $payments = Payment::where('customer_id', $user->id)
-                    ->with(['resume', 'training'])
+                  
                     ->get();
                 return view('dashboard.customer', compact('payments'));
+
 
 
             case 'accountant':

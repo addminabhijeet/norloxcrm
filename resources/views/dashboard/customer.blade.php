@@ -383,6 +383,7 @@
                                     @else
                                         <span class="training-na">N/A</span>
                                     @endif
+
                                 </td>
                             </tr>
                         @endforeach

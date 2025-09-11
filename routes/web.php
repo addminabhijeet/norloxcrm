@@ -9,6 +9,7 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\TrainerController;
 use App\Http\Controllers\LoginsController;
 use App\Http\Controllers\CalendarController;
+use App\Http\Controllers\GoogleSheetController;
 
 
 
@@ -66,4 +67,7 @@ Route::patch('/payment/{id}/status', [PaymentController::class, 'updateStatus'])
 Route::patch('/training/{id}/trastatus', [PaymentController::class, 'traupdateStatus'])->name('training.updateStatus');
 Route::get('/login-history', [LoginController::class, 'loginHistory'])->name('login.history');
 
+Route::get('/google-sheet', [GoogleSheetController::class, 'index'])->name('google.sheet.index');
+Route::post('/google-sheet/fetch', [GoogleSheetController::class, 'fetch'])->name('google.sheet.fetch');
+Route::post('/google-sheet/update/{id}', [GoogleSheetController::class, 'update'])->name('google.sheet.update');
 
