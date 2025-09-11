@@ -260,23 +260,55 @@
                 padding: 12px 10px;
             }
         }
+
+        .dashboard-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 20px;
+            background-color: #2c3e50;
+            color: #fff;
+        }
+
+        .user-info {
+            margin-right: 15px;
+            font-size: 0.9em;
+        }
+
+        .user-info span {
+            margin: 0 5px;
+        }
+
     </style>
 </head>
 <body>
     <div class="dashboard-container">
         <div class="dashboard-header">
             <h2>
-                <i class="fas fa-user-graduate"></i> Junior Dashboard
+                <i class="fas fa-user-tie"></i> Junior Dashboard
             </h2>
-     
+
+            <div class="user-info">
+                <span class="user-name">{{ Auth::user()->name }}</span> |
+                <span class="user-email">{{ Auth::user()->email }}</span>
+            </div>
+
+            <!-- Calendar Button -->
+            <a href="{{ route('calendar.index') }}" 
+            class="calendar-btn"
+            style="margin-right: 15px; padding: 6px 12px; background-color: #4f46e5; color: #fff; border-radius: 6px; text-decoration: none; font-size: 0.9em;">
+                <i class="fas fa-calendar-alt"></i> Calendar
+            </a>
+
             <form method="POST" action="{{ route('logout') }}" style="display:inline;">
                 @csrf
-                <button type="submit" 
-                        style="background:none; border:none; color:#ffffff; cursor:pointer; font-size:inherit;">
+                <button type="submit" style="background:none; border:none; color:#ffffff; cursor:pointer; font-size:inherit;">
                     Logout
                 </button>
             </form>
         </div>
+
+
 
             <!-- Statistics Cards -->
             <div class="stats-container">

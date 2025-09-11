@@ -8,6 +8,7 @@ use App\Http\Controllers\ResumeController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\TrainerController;
 use App\Http\Controllers\LoginsController;
+use App\Http\Controllers\CalendarController;
 
 
 
@@ -54,6 +55,9 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware('role:admin')->group(function () {
         // Admin-specific routes
     });
+
+    Route::get('/calendar/{month?}/{year?}', [CalendarController::class, 'index'])->name('calendar.index');
+    Route::post('/calendar/update-status', [CalendarController::class, 'updateStatus'])->name('calendar.updateStatus');
 });
 
 Route::post('/resumes/upload/{id}', [ResumeController::class, 'upload'])->name('resumes.upload')->middleware('auth');
