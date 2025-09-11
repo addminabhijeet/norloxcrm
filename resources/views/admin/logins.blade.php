@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Accountant Dashboard</title>
+    <title>Admin Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -31,9 +31,13 @@
         }
         
         .dashboard-header {
-            background: linear-gradient(to right, #059669, #10b981);
+            background: linear-gradient(to right, #7c3aed, #4f46e5);
             color: white;
             padding: 25px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
         }
         
         .dashboard-header h2 {
@@ -45,6 +49,28 @@
         
         .dashboard-header h2 i {
             margin-right: 12px;
+        }
+        
+        .upload-btn {
+            display: inline-flex;
+            align-items: center;
+            background: white;
+            color: #7c3aed;
+            text-decoration: none;
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .upload-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .upload-btn i {
+            margin-right: 8px;
         }
         
         .dashboard-content {
@@ -64,12 +90,12 @@
         
         .section-title i {
             margin-right: 10px;
-            color: #059669;
+            color: #7c3aed;
         }
         
         .stats-container {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 20px;
             margin-bottom: 30px;
         }
@@ -79,7 +105,7 @@
             border-radius: 10px;
             padding: 20px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-            border-left: 4px solid #059669;
+            border-left: 4px solid #7c3aed;
         }
         
         .stat-title {
@@ -91,19 +117,22 @@
         .stat-value {
             font-size: 24px;
             font-weight: 600;
-            color: #059669;
+            color: #7c3aed;
         }
         
-        .payments-table {
+        .users-table-container {
+            overflow-x: auto;
+            border-radius: 8px;
+            box-shadow: 0 1px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .users-table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 15px;
-            box-shadow: 0 1px 10px rgba(0, 0, 0, 0.05);
-            border-radius: 8px;
-            overflow: hidden;
+            min-width: 800px;
         }
         
-        .payments-table th {
+        .users-table th {
             background-color: #f1f5f9;
             padding: 15px;
             text-align: left;
@@ -112,57 +141,65 @@
             border-bottom: 2px solid #e2e8f0;
         }
         
-        .payments-table td {
+        .users-table td {
             padding: 15px;
             border-bottom: 1px solid #e2e8f0;
         }
         
-        .payments-table tr:last-child td {
+        .users-table tr:last-child td {
             border-bottom: none;
         }
         
-        .payments-table tr {
+        .users-table tr {
             transition: background-color 0.2s ease;
         }
         
-        .payments-table tr:hover {
+        .users-table tr:hover {
             background-color: #f8fafc;
         }
         
-        .status-badge {
+        .role-badge {
             display: inline-block;
             padding: 6px 12px;
             border-radius: 20px;
             font-size: 13px;
             font-weight: 500;
+            text-transform: capitalize;
         }
         
-        .status-completed {
+        .role-junior {
+            background-color: #dbeafe;
+            color: #1d4ed8;
+        }
+        
+        .role-senior {
+            background-color: #ede9fe;
+            color: #7c3aed;
+        }
+        
+        .role-customer {
             background-color: #dcfce7;
             color: #16a34a;
         }
         
-        .status-pending {
+        .role-accountant {
             background-color: #fef3c7;
             color: #d97706;
         }
         
-        .status-failed {
+        .role-trainer {
             background-color: #fee2e2;
             color: #dc2626;
         }
         
-        .amount {
-            font-weight: 600;
-            color: #059669;
+        .role-admin {
+            background-color: #f3e8ff;
+            color: #9333ea;
         }
         
-        .transaction-id {
-            font-family: monospace;
-            background-color: #f1f5f9;
-            padding: 4px 8px;
-            border-radius: 4px;
+        .date-cell {
             font-size: 13px;
+            color: #64748b;
         }
         
         .empty-state {
@@ -182,13 +219,21 @@
         }
         
         @media (max-width: 1024px) {
-            .payments-table {
-                display: block;
+            .users-table-container {
                 overflow-x: auto;
             }
         }
         
         @media (max-width: 768px) {
+            .dashboard-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .upload-btn {
+                margin-top: 15px;
+            }
+            
             .dashboard-content {
                 padding: 20px;
             }
@@ -211,8 +256,8 @@
                 font-size: 18px;
             }
             
-            .payments-table th,
-            .payments-table td {
+            .users-table th,
+            .users-table td {
                 padding: 12px 10px;
                 font-size: 14px;
             }
@@ -230,82 +275,53 @@
 <body>
     <div class="dashboard-container">
         <div class="dashboard-header">
-            <h2><i class="fas fa-calculator"></i> Accountant Dashboard</h2>
-
-        
-            <form method="POST" action="{{ route('logout') }}" style="display:inline;">
-                @csrf
-                <button type="submit" class="upload-btn" style="background:none;border:none;color:#ffffff;cursor:pointer;">
-                    Logout
-                </button>
-            </form>
-        </div>
+            <h2><i class="fas fa-user-shield"></i> Admin Dashboard</h2>
+             
             
-            <!-- Statistics Cards -->
-            <div class="stats-container">
-                <div class="stat-card">
-                    <div class="stat-title">TOTAL PAYMENTS</div>
-                    <div class="stat-value">${{ number_format($payments->sum('amount'), 2) }}</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-title">COMPLETED PAYMENTS</div>
-                    <div class="stat-value">{{ $payments->where('status', 'completed')->count() }}</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-title">PENDING PAYMENTS</div>
-                    <div class="stat-value">{{ $payments->where('status', 'pending')->count() }}</div>
-                </div>
+                <form method="POST" action="{{ route('logout') }}" style="display:inline;">
+                    @csrf
+                    <button type="submit" class="upload-btn" style="background:none;border:none;color:#0ea5e9;cursor:pointer;">
+                        Logout
+                    </button>
+                </form>
             </div>
-            
-            @if($payments && count($payments) > 0)
-            <table class="payments-table">
+
+        @if($logins && count($logins) > 0)
+        <div class="users-table-container">
+            <table class="users-table">
                 <thead>
                     <tr>
-                        <th>Candidate</th>
-                        <th>Amount</th>
-                        <th>Status</th>
-                        <th>Transaction ID</th>
+                        <th>ID</th>
+                        <th>User</th>
+                        <th>IP Address</th>
+                        <th>User Agent</th>
+                        <th>Logged In At</th>
+                        <th>Created At</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($payments as $payment)
+                    @foreach($logins as $login)
                     <tr>
-                        <td>{{ $payment->customer->name }}</td>
-                        <td class="amount">${{ number_format($payment->amount, 2) }}</td>
-                        <td>
-                            <form action="{{ route('payment.updateStatus', $payment->id) }}" method="POST">
-                                @csrf
-                                @method('PATCH')
-                                <select name="status" onchange="this.form.submit()" 
-                                        class="status-badge {{ $payment->status }}">
-                                    @php
-                                        $statuses = [
-                                            'customer_confirmation' => 'Customer Confirmation',
-                                            'paid' => 'Paid'
-                                        ];
-                                    @endphp
-                                    @foreach($statuses as $key => $label)
-                                        <option value="{{ $key }}" {{ $payment->status === $key ? 'selected' : '' }}>
-                                            {{ $label }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </form>
+                        <td>{{ $login->id }}</td>
+                        <td>{{ $login->user ? $login->user->name : 'Unknown' }} (ID: {{ $login->user_id }})</td>
+                        <td>{{ $login->ip_address }}</td>
+                        <td style="max-width: 300px; word-wrap: break-word;">
+                            {{ Str::limit($login->user_agent, 80) }}
                         </td>
-                        <td>
-                            <span class="transaction-id">{{ $payment->transaction_id ?? 'N/A' }}</span>
-                        </td>
+                        <td class="date-cell">{{ \Carbon\Carbon::parse($login->logged_in_at)->format('M j, Y g:i A') }}</td>
+                        <td class="date-cell">{{ \Carbon\Carbon::parse($login->created_at)->format('M j, Y g:i A') }}</td>
                     </tr>
                     @endforeach
                 </tbody>
             </table>
-            @else
-            <div class="empty-state">
-                <i class="fas fa-receipt"></i>
-                <p>No payment records found.</p>
-            </div>
-            @endif
         </div>
+        @else
+        <div class="empty-state">
+            <i class="fas fa-sign-out-alt"></i>
+            <p>No login records found.</p>
+        </div>
+        @endif
+
     </div>
 </body>
 </html>

@@ -290,7 +290,7 @@
         
             <form method="POST" action="{{ route('logout') }}" style="display:inline;">
                 @csrf
-                <button type="submit" class="upload-btn" style="background:none;border:none;color:#0ea5e9;cursor:pointer;">
+                <button type="submit" class="upload-btn" style="background:none;border:none;color:#ffffff;cursor:pointer;">
                     Logout
                 </button>
             </form>

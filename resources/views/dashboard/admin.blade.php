@@ -277,13 +277,19 @@
         <div class="dashboard-header">
             <h2><i class="fas fa-user-shield"></i> Admin Dashboard</h2>
              
+                <a href="{{ route('logins') }}" 
+                    class="upload-btn" 
+                    style="background:none;border:none;color:#ffffff;cursor:pointer;text-decoration:none;">
+                        Logins History
+                </a>
             
                 <form method="POST" action="{{ route('logout') }}" style="display:inline;">
                     @csrf
-                    <button type="submit" class="upload-btn" style="background:none;border:none;color:#0ea5e9;cursor:pointer;">
+                    <button type="submit" class="upload-btn" style="background:none;border:none;color:#ffffff;cursor:pointer;">
                         Logout
                     </button>
                 </form>
+
             </div>
         
         <div class="dashboard-content">
@@ -310,43 +316,47 @@
                     <div class="stat-value">{{ $users->where('role', 'customer')->count() }}</div>
                 </div>
             </div>
+                    @if($users && count($users) > 0)
+                    <div class="users-table-container">
+                        <table class="users-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Role</th>
+                                    <th>Created At</th>
+                                    <th>Updated At</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($users as $user)
+                                <tr>
+                                    <td>{{ $user->id }}</td>
+                                    <td>{{ $user->name }}</td>
+                                    <td>{{ $user->email }}</td>
+                                    <td>
+                                        <span class="role-badge role-{{ $user->role }}">{{ $user->role }}</span>
+                                    </td>
+                                    <td class="date-cell">{{ $user->created_at->format('M j, Y g:i A') }}</td>
+                                    <td class="date-cell">{{ $user->updated_at->format('M j, Y g:i A') }}</td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                    @else
+                    <div class="empty-state">
+                        <i class="fas fa-user-times"></i>
+                        <p>No users found.</p>
+                    </div>
+                    @endif
+                </div>
             
-            @if($users && count($users) > 0)
-            <div class="users-table-container">
-                <table class="users-table">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Role</th>
-                            <th>Created At</th>
-                            <th>Updated At</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($users as $user)
-                        <tr>
-                            <td>{{ $user->id }}</td>
-                            <td>{{ $user->name }}</td>
-                            <td>{{ $user->email }}</td>
-                            <td>
-                                <span class="role-badge role-{{ $user->role }}">{{ $user->role }}</span>
-                            </td>
-                            <td class="date-cell">{{ $user->created_at->format('M j, Y g:i A') }}</td>
-                            <td class="date-cell">{{ $user->updated_at->format('M j, Y g:i A') }}</td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-            @else
-            <div class="empty-state">
-                <i class="fas fa-user-times"></i>
-                <p>No users found.</p>
-            </div>
-            @endif
-        </div>
+        </h3>
+
+        
+
     </div>
 </body>
 </html>

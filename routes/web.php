@@ -7,8 +7,12 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ResumeController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\TrainerController;
+use App\Http\Controllers\LoginsController;
+
+
 
 // Authentication
+Route::get('/admin/logins', [LoginsController::class, 'index'])->name('logins');
 Route::get('/', [Controller::class, 'index'])->name('home');
 Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
 Route::post('/register', [RegisterController::class, 'register'])->name('register.submit');
