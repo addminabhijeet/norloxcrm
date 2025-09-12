@@ -322,7 +322,7 @@
             </a>
             
             <!-- Database Button -->
-            <a href="{{ route('google.sheet.index') }}" 
+            <a href="{{ route('call.reports') }}" 
             class="calendar-btn"
             style="margin-right: 15px; padding: 6px 12px; background-color: #4f46e5; color: #fff; border-radius: 6px; text-decoration: none; font-size: 0.9em;">
                 <i class="fas fa-phone-alt"></i> Call Tracker
@@ -427,104 +427,117 @@
             @endif
         </div>
     </div>
-    <script>
-        let timerInterval, backendSyncInterval;
-        let remainingSeconds = Number("{{ $remaining_seconds ?? 0 }}");
-        let elapsedSeconds   = Number("{{ $elapsed_seconds ?? 0 }}");
+<script>
+    let timerInterval, backendSyncInterval;
+    let remainingSeconds = Number("{{ $remaining_seconds ?? 0 }}");
+    let elapsedSeconds   = Number("{{ $elapsed_seconds ?? 0 }}");
 
-        function formatTime(sec){
-            let h = Math.floor(sec/3600);
-            let m = Math.floor((sec%3600)/60);
-            let s = sec%60;
-            return `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
-        }
+    function formatTime(sec){
+        let h = Math.floor(sec/3600);
+        let m = Math.floor((sec%3600)/60);
+        let s = sec%60;
+        return `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+    }
 
-        function updateUI(){
-            document.getElementById('countdown').innerText = formatTime(remainingSeconds);
-            document.getElementById('elapsed').innerText = formatTime(elapsedSeconds);
-        }
+    function updateUI(){
+        document.getElementById('countdown').innerText = formatTime(remainingSeconds);
+        document.getElementById('elapsed').innerText = formatTime(elapsedSeconds);
+    }
 
-        function startTimer(){
-            clearInterval(timerInterval);
-            clearInterval(backendSyncInterval);
+    function forceLogout(){
+        fetch("{{ route('logout') }}", {
+            method: "POST",
+            headers: {
+                "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                "Content-Type": "application/json"
+            }
+        }).then(()=>{
+            window.location.href = "/login"; // redirect after logout
+        });
+    }
 
-            // UI update every second
-            timerInterval = setInterval(()=>{
-                if(remainingSeconds > 0){
-                    remainingSeconds--;
-                    elapsedSeconds++;
-                    updateUI();
-                } else {
+    function startTimer(){
+        clearInterval(timerInterval);
+        clearInterval(backendSyncInterval);
+
+        // UI update every second
+        timerInterval = setInterval(()=>{
+            if(remainingSeconds > 0){
+                remainingSeconds--;
+                elapsedSeconds++;
+                updateUI();
+            } else {
+                clearInterval(timerInterval);
+                clearInterval(backendSyncInterval);
+                alert("Your 8-hour work session has ended.");
+                forceLogout();
+            }
+        }, 1000);
+
+        // Backend sync every minute
+        backendSyncInterval = setInterval(()=>{
+            fetch("{{ route('timer.update') }}", {
+                method: "POST",
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ action: 'tick' })
+            })
+            .then(res => res.json())
+            .then(data=>{
+                remainingSeconds = data.remaining_seconds;
+                elapsedSeconds = (8*60*60) - remainingSeconds;
+                updateUI();
+
+                if (data.status === 'completed') {
                     clearInterval(timerInterval);
                     clearInterval(backendSyncInterval);
                     alert("Your 8-hour work session has ended.");
-                    window.location.href = "/login";
+                    forceLogout();
                 }
-            }, 1000);
+            })
+        }, 60000); // 1 min
+    }
 
-            // Backend update every minute
-            backendSyncInterval = setInterval(()=>{
-                fetch("{{ route('timer.update') }}", {
-                    method: "POST",
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ action: 'tick' })
-                })
-                .then(res => res.json())
-                .then(data=>{
-                    remainingSeconds = data.remaining_seconds;
-                    elapsedSeconds = (8*60*60) - remainingSeconds;
-                    updateUI();
+    // Pause / Resume handler
+    document.getElementById('pauseSelect').addEventListener('change', function(){
+        let type = this.value;
 
-                    if (data.status === 'completed') {
-                        clearInterval(timerInterval);
-                        clearInterval(backendSyncInterval);
-                        alert("Your 8-hour work session has ended.");
-                        if (data.logout) window.location.href = "/login";
-                    }
-                })
-            }, 60000); // 1 min
+        if(type === "resume"){
+            fetch("{{ route('timer.update') }}", {
+                method: "POST",
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ action: 'resume' })
+            })
+            .then(res=>res.json())
+            .then(()=>{
+                startTimer();
+            })
+        } 
+        else if(type){ // Pause
+            fetch("{{ route('timer.update') }}", {
+                method: "POST",
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ action: 'pause', pause_type: type })
+            })
+            .then(res=>res.json())
+            .then(()=>{
+                clearInterval(timerInterval);
+                clearInterval(backendSyncInterval);
+            })
         }
+    });
 
-        // Pause / Resume handler
-        document.getElementById('pauseSelect').addEventListener('change', function(){
-            let type = this.value;
+    startTimer();
+</script>
 
-            if(type === "resume"){
-                fetch("{{ route('timer.update') }}", {
-                    method: "POST",
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ action: 'resume' })
-                })
-                .then(res=>res.json())
-                .then(data=>{
-                    startTimer();
-                })
-            } 
-            else if(type){ // Pause
-                fetch("{{ route('timer.update') }}", {
-                    method: "POST",
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ action: 'pause', pause_type: type })
-                })
-                .then(res=>res.json())
-                .then(data=>{
-                    clearInterval(timerInterval);
-                    clearInterval(backendSyncInterval);
-                })
-            }
-        });
-
-        startTimer();
-    </script>
 
 </body>
 </html>

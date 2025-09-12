@@ -10,6 +10,7 @@ use App\Http\Controllers\TrainerController;
 use App\Http\Controllers\LoginsController;
 use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\GoogleSheetController;
+use App\Http\Controllers\CallReportController;
 
 
 
@@ -73,4 +74,5 @@ Route::post('/google-sheet/fetch', [GoogleSheetController::class, 'fetch'])->nam
 Route::patch('/google-sheet/update/{id}', [GoogleSheetController::class, 'update'])->name('google.sheet.update');
 Route::post('/google-sheet/store', [GoogleSheetController::class, 'store'])->name('google.sheet.store');
 
+Route::get('/call-reports', [CallReportController::class, 'index'])->name('call.reports');
 
