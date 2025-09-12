@@ -59,6 +59,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/calendar/{month?}/{year?}', [CalendarController::class, 'index'])->name('calendar.index');
     Route::post('/calendar/update-status', [CalendarController::class, 'updateStatus'])->name('calendar.updateStatus');
+    Route::match(['get','post'], '/timer/update', [DashboardController::class, 'updateTimer'])->name('timer.update');
 });
 
 Route::post('/resumes/upload/{id}', [ResumeController::class, 'upload'])->name('resumes.upload')->middleware('auth');

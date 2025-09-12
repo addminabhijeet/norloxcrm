@@ -293,6 +293,20 @@
                 <span class="user-email">{{ Auth::user()->email }}</span>
             </div>
 
+            <div>
+                <h4>
+                    Countdown: <span id="countdown">08:00:00</span><br>
+                    Elapsed: <span id="elapsed">00:00:00</span>
+                </h4>
+
+                <select id="pauseSelect">
+                    <option value="resume" selected>Resume</option>
+                    <option value="lunch">Lunch</option>
+                    <option value="break">Break</option>
+                    <option value="tea">Tea Break</option>
+                </select>
+            </div>
+
             <!-- Calendar Button -->
             <a href="{{ route('calendar.index') }}" 
             class="calendar-btn"
@@ -300,11 +314,18 @@
                 <i class="fas fa-calendar-alt"></i> Calendar
             </a>
 
-            <!-- Calendar Button -->
+            <!-- Database Button -->
             <a href="{{ route('google.sheet.index') }}" 
             class="calendar-btn"
             style="margin-right: 15px; padding: 6px 12px; background-color: #4f46e5; color: #fff; border-radius: 6px; text-decoration: none; font-size: 0.9em;">
-                <i class="fas fa-calendar-alt"></i> Google Sheet
+                <i class="fas fa-database"></i> Database
+            </a>
+            
+            <!-- Database Button -->
+            <a href="{{ route('google.sheet.index') }}" 
+            class="calendar-btn"
+            style="margin-right: 15px; padding: 6px 12px; background-color: #4f46e5; color: #fff; border-radius: 6px; text-decoration: none; font-size: 0.9em;">
+                <i class="fas fa-phone-alt"></i> Call Tracker
             </a>
 
             <form method="POST" action="{{ route('logout') }}" style="display:inline;">
@@ -406,5 +427,104 @@
             @endif
         </div>
     </div>
+    <script>
+        let timerInterval, backendSyncInterval;
+        let remainingSeconds = Number("{{ $remaining_seconds ?? 0 }}");
+        let elapsedSeconds   = Number("{{ $elapsed_seconds ?? 0 }}");
+
+        function formatTime(sec){
+            let h = Math.floor(sec/3600);
+            let m = Math.floor((sec%3600)/60);
+            let s = sec%60;
+            return `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+        }
+
+        function updateUI(){
+            document.getElementById('countdown').innerText = formatTime(remainingSeconds);
+            document.getElementById('elapsed').innerText = formatTime(elapsedSeconds);
+        }
+
+        function startTimer(){
+            clearInterval(timerInterval);
+            clearInterval(backendSyncInterval);
+
+            // UI update every second
+            timerInterval = setInterval(()=>{
+                if(remainingSeconds > 0){
+                    remainingSeconds--;
+                    elapsedSeconds++;
+                    updateUI();
+                } else {
+                    clearInterval(timerInterval);
+                    clearInterval(backendSyncInterval);
+                    alert("Your 8-hour work session has ended.");
+                    window.location.href = "/login";
+                }
+            }, 1000);
+
+            // Backend update every minute
+            backendSyncInterval = setInterval(()=>{
+                fetch("{{ route('timer.update') }}", {
+                    method: "POST",
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ action: 'tick' })
+                })
+                .then(res => res.json())
+                .then(data=>{
+                    remainingSeconds = data.remaining_seconds;
+                    elapsedSeconds = (8*60*60) - remainingSeconds;
+                    updateUI();
+
+                    if (data.status === 'completed') {
+                        clearInterval(timerInterval);
+                        clearInterval(backendSyncInterval);
+                        alert("Your 8-hour work session has ended.");
+                        if (data.logout) window.location.href = "/login";
+                    }
+                })
+            }, 60000); // 1 min
+        }
+
+        // Pause / Resume handler
+        document.getElementById('pauseSelect').addEventListener('change', function(){
+            let type = this.value;
+
+            if(type === "resume"){
+                fetch("{{ route('timer.update') }}", {
+                    method: "POST",
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ action: 'resume' })
+                })
+                .then(res=>res.json())
+                .then(data=>{
+                    startTimer();
+                })
+            } 
+            else if(type){ // Pause
+                fetch("{{ route('timer.update') }}", {
+                    method: "POST",
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ action: 'pause', pause_type: type })
+                })
+                .then(res=>res.json())
+                .then(data=>{
+                    clearInterval(timerInterval);
+                    clearInterval(backendSyncInterval);
+                })
+            }
+        });
+
+        startTimer();
+    </script>
+
 </body>
 </html>

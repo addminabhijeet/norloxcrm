@@ -11,6 +11,11 @@ class Attendance extends Model
 
     protected $fillable = ['user_id', 'date', 'status'];
 
+    // 👇 This ensures 'date' is always a Carbon instance
+    protected $casts = [
+        'date' => 'date',
+    ];
+
     public function user()
     {
         return $this->belongsTo(User::class);
