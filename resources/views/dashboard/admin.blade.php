@@ -7,7 +7,6 @@
 @endphp
 
 @section('content')
-<body>
     <div class="dashboard-container">
         <div class="dashboard-header">
             <h2><i class="fas fa-user-shield"></i> Admin Dashboard</h2>
@@ -93,5 +92,4 @@
         
 
     </div>
-</body>
 @endsection

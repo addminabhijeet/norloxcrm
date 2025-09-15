@@ -3,11 +3,18 @@
         <iconify-icon icon="radix-icons:cross-2"></iconify-icon>
     </button>
     <div>
-        <a href="" class="sidebar-logo">
-            <img src="{{ asset('assets/images/lo" alt="site logo" class="light-logo">
-            <img src="{{ asset('assets/images/logo-lig" alt="site logo" class="dark-logo">
-            <img src="{{ asset('assets/images/logo-ic" alt="site logo" class="logo-icon">
-        </a>
+    <a href="" class="sidebar-logo d-flex align-items-center justify-content-center" style="width:220px; height:72px;">
+        <!-- Light logo -->
+        <i class="bi bi-brightness-high light-logo" style="font-size:32px; line-height:40px;"></i>
+
+        <!-- Dark logo -->
+        <i class="bi bi-moon-stars dark-logo d-none" style="font-size:32px; line-height:40px;"></i>
+
+        <!-- Icon logo -->
+        <i class="bi bi-bootstrap logo-icon d-none" style="font-size:32px; line-height:40px;"></i>
+    </a>
+
+
     </div>
     <div class="sidebar-menu-area">
         <ul class="sidebar-menu" id="sidebar-menu">
