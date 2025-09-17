@@ -340,7 +340,7 @@
     <div class="dashboard-container">
         <div class="dashboard-header">
             <h2>
-                <i class="fas fa-user-tie"></i> Senior Dashboard
+                <i class="fas fa-user-tie"></i> Junior Dashboard
             </h2>
 
             <div class="user-info">
@@ -348,11 +348,39 @@
                 <span class="user-email">{{ Auth::user()->email }}</span>
             </div>
 
+            <div>
+                <h4>
+                    Countdown: <span id="countdown">08:00:00</span><br>
+                    Elapsed: <span id="elapsed">00:00:00</span>
+                </h4>
+
+                <select id="pauseSelect">
+                    <option value="resume" selected>Resume</option>
+                    <option value="lunch">Lunch</option>
+                    <option value="break">Break</option>
+                    <option value="tea">Tea Break</option>
+                </select>
+            </div>
+
             <!-- Calendar Button -->
             <a href="{{ route('calendar.index') }}" 
             class="calendar-btn"
             style="margin-right: 15px; padding: 6px 12px; background-color: #4f46e5; color: #fff; border-radius: 6px; text-decoration: none; font-size: 0.9em;">
                 <i class="fas fa-calendar-alt"></i> Calendar
+            </a>
+
+            <!-- Database Button -->
+            <a href="{{ route('google.sheet.index') }}" 
+            class="calendar-btn"
+            style="margin-right: 15px; padding: 6px 12px; background-color: #4f46e5; color: #fff; border-radius: 6px; text-decoration: none; font-size: 0.9em;">
+                <i class="fas fa-database"></i> Database
+            </a>
+            
+            <!-- Database Button -->
+            <a href="{{ route('call.reports') }}" 
+            class="calendar-btn"
+            style="margin-right: 15px; padding: 6px 12px; background-color: #4f46e5; color: #fff; border-radius: 6px; text-decoration: none; font-size: 0.9em;">
+                <i class="fas fa-phone-alt"></i> Call Tracker
             </a>
 
             <form method="POST" action="{{ route('logout') }}" style="display:inline;">
