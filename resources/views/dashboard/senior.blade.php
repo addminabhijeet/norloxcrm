@@ -389,10 +389,10 @@
                 <table class="resumes-table">
                     <thead>
                         <tr>
-                            <th>ID</th>
                             <th>Candidate</th>
                             <th>Status</th>
                             <th>File</th>
+                            <th>ID</th>
                         </tr>
                     </thead>
                     <tbody>
