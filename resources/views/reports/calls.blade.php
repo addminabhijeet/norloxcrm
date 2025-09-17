@@ -105,7 +105,7 @@
 
 <div class="dashboard-container">
     <div class="dashboard-header">
-        <h2><i class="fas fa-user-tie"></i> Junior Dashboard</h2>
+        <h2><i class="fas fa-user-tie"></i> Dashboard</h2>
 
         <div class="user-info">
             <span>{{ Auth::user()->name }}</span> |
@@ -136,7 +136,7 @@
     </div>
 
     <div class="p-4">
-        <h2 class="mb-4">📊 Call Reports</h2>
+        <h2 class="mb-4">Per Hours Call Reports</h2>
 
 
 
@@ -145,7 +145,7 @@
             <div class="col-md-6">
                 <h5>Duplicate Names</h5>
                 <table class="table table-bordered table-sm">
-                    <thead><tr><th>Name</th><th>Count</th></tr></thead>
+                    <thead><tr><th>Count</th></tr></thead>
                     <tbody>
                         @foreach($dupByName as $row)
                         <tr><td>{{ $row->candidate_name }}</td><td>{{ $row->cnt }}</td></tr>
@@ -157,7 +157,7 @@
             <div class="col-md-6">
                 <h5>Duplicate Emails</h5>
                 <table class="table table-bordered table-sm">
-                    <thead><tr><th>Email</th><th>Count</th></tr></thead>
+                    <thead><tr><th>Count</th></tr></thead>
                     <tbody>
                         @foreach($dupByEmail as $row)
                         <tr><td>{{ $row->email }}</td><td>{{ $row->cnt }}</td></tr>
