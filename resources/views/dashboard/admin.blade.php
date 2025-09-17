@@ -290,6 +290,13 @@
                     </button>
                 </form>
 
+                <!-- Calendar Button -->
+                <a href="{{ route('calendar.index') }}" 
+                class="calendar-btn"
+                style="margin-right: 15px; padding: 6px 12px; background-color: #4f46e5; color: #fff; border-radius: 6px; text-decoration: none; font-size: 0.9em;">
+                    <i class="fas fa-calendar-alt"></i> Calendar
+                </a>
+
             </div>
         
         <div class="dashboard-content">
